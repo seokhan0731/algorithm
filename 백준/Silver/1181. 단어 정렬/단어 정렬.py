@@ -1,6 +1,22 @@
+"""
+해당 문제에서 얻어갈 포인트. 정렬 기준 커스텀, 중복 제거
+1. 정렬 기준 커스텀
+해당 문제에서는 두 가지 정렬 조건에 우선순위를 정하여, 정렬을 수행해야 한다.
+자바에서는 comparator를 통해 람다식으로 정렬 기준을 설정하는데, 파이썬도 마찬가지고 람다식으로 정렬 기준을 설정한다.
+이때, 파이썬이 람다식을 설정하는 방식이 더 간편한데, 정렬될 이터러블 객체와 [key=lambda 변수: 조건]의 꼴이다.
+만약 두 가지 이상의 정렬 조건이라면, 우선순위에 맞추어 튜플로 감싸주면 된다.
++) 내림차순의 경우: 숫자형태는 -를 붙여 가능하지만, 문자열은 별도의 추가 로직이 필요하다.
+
+2. 중복 제거
+해당 문제를 자바로 풀었을 때는, 선 정렬 후, 중복제거 알고리즘 !array[i - 1].equals(array[i])을 사용하여, 제거했지만,
+집합(set)을 사용하는 것이, 성능적으로 뛰어나다.
+얘도 자바와 마찬가지로 해시 알고리즘을 사용하고, map과 달리 key값만 저장하여 값의 유무 판단에 사용된다.
+
++) sorted는 굳이 list(set())꼴이 아니더라도, 이터러블 객체면 다 가능하기 때문에, 굳이 list()로 안 감싸도 된다.
+"""
 import sys
 
-# sys.stdin = open("input.txt", "r")
+sys.stdin = open("input.txt", "r")
 datas = sys.stdin.read().split()[1:]
-sorted_datas = sorted(list(set(datas)), key=lambda x: (len(x), x))
+sorted_datas = sorted(set(datas), key=lambda x: (len(x), x))
 print('\n'.join(sorted_datas))
