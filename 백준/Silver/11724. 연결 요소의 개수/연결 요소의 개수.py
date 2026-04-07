@@ -42,37 +42,37 @@ sys.setrecursionlimit(10 ** 8)
 #         if not visited_list[adjacent_node]:
 #             dfs_recursive(adjacent_node)
 
-def dfs_stack(start_idx):
-    """
-    코드 3. 스택을 통한 dfs 구현
-    만약 인접 노드의 방문 여부를 확인하자마자 방문 도장을 찍지 않고, pop()하는 시점에 도장을 찍는다면?
-    코드 자체는 의도대로 탐색을 수행하지만, 스택에 중복된 노드들이 여러 개가 존재 할 수가 있다.
-    첫 pop 이전 시점에는 뱡문 안 한줄 알고, 계속 append하기 떄문 (시점 주의!)
-
-    :param start_idx: 탐색 시작 인덱스
-    :return: None(탐색 진행하며, visited_list에 정점 탐색 여부 기록함)
-    """
-    visited_list[start_idx] = True
-    schedule_stack.append(start_idx)
-    while schedule_stack:
-        start_node = schedule_stack.pop()
-        for adjacent_node in graph_list[start_node]:
-            if not visited_list[adjacent_node]:
-                visited_list[adjacent_node] = True
-                schedule_stack.append(adjacent_node)
+# def dfs_stack(start_idx):
+#     """
+#     코드 3. 스택을 통한 dfs 구현
+#     만약 인접 노드의 방문 여부를 확인하자마자 방문 도장을 찍지 않고, pop()하는 시점에 도장을 찍는다면?
+#     코드 자체는 의도대로 탐색을 수행하지만, 스택에 중복된 노드들이 여러 개가 존재 할 수가 있다.
+#     첫 pop 이전 시점에는 뱡문 안 한줄 알고, 계속 append하기 떄문 (시점 주의!)
+#
+#     :param start_idx: 탐색 시작 인덱스
+#     :return: None(탐색 진행하며, visited_list에 정점 탐색 여부 기록함)
+#     """
+#     visited_list[start_idx] = True
+#     schedule_stack.append(start_idx)
+#     while schedule_stack:
+#         start_node = schedule_stack.pop()
+#         for adjacent_node in graph_list[start_node]:
+#             if not visited_list[adjacent_node]:
+#                 visited_list[adjacent_node] = True
+#                 schedule_stack.append(adjacent_node)
 
 
 # sys.stdin = open("input.txt", "r")
-data = sys.stdin.read().splitlines()
-node_count, edge_count = map(int, data[0].split())
-graph_list = [[] for _ in range(node_count + 1)]
-
-for line in data[1:]:
-    node1, node2 = map(int, line.split())
-    graph_list[node1].append(node2)
-    graph_list[node2].append(node1)
-
-visited_list = [False] * (node_count + 1)
+# data = sys.stdin.read().splitlines()
+# node_count, edge_count = map(int, data[0].split())
+# graph_list = [[] for _ in range(node_count + 1)]
+#
+# for line in data[1:]:
+#     node1, node2 = map(int, line.split())
+#     graph_list[node1].append(node2)
+#     graph_list[node2].append(node1)
+#
+# visited_list = [False] * (node_count + 1)
 
 # 코드 1. bfs
 # component_count = 0
@@ -93,10 +93,43 @@ visited_list = [False] * (node_count + 1)
 # print(component_count)
 
 # 코드 3. dfs_stack
-schedule_stack = []
-component_count = 0
-for i in range(1, node_count + 1):
-    if not visited_list[i]:
-        dfs_stack(i)
-        component_count += 1
-print(component_count)
+# schedule_stack = []
+# component_count = 0
+# for i in range(1, node_count + 1):
+#     if not visited_list[i]:
+#         dfs_stack(i)
+#         component_count += 1
+# print(component_count)
+
+
+def find_parent(node):
+    if parent_list[node] == node:
+        return node
+    parent_list[node] = find_parent(parent_list[node])
+    return parent_list[node]
+
+
+# 작은 노드의 부모 인덱스를 node1이랑 node 2중 누가 갖고 있는지를 알아야되네
+def union(node1, node2):
+    global count_val
+    node1_parent = find_parent(node1)
+    node2_parent = find_parent(node2)
+    if node1_parent != node2_parent:
+        count_val -= 1
+        if node1_parent > node2_parent:
+            parent_list[node1_parent] = node2_parent
+        else:
+            parent_list[node2_parent] = node1_parent
+
+
+# 코드 4. 유니온 파인드
+# sys.stdin = open("input.txt", "r")
+data = sys.stdin.read().splitlines()
+node_count, edge_count = map(int, data[0].split())
+parent_list = [i for i in range(node_count + 1)]
+count_val = node_count
+for line in data[1:]:
+    node1, node2 = map(int, line.split())
+    union(node1, node2)
+
+print(count_val)
