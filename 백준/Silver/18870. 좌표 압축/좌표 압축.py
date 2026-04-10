@@ -1,7 +1,7 @@
 import sys
 
 """
-set을 이용한 중복 제거 및 딕셔너리를 통한 구현
+코드1. set을 이용한 중복 제거 및 딕셔너리를 통한 구현
 해당 문제는 자신보다 작은 수가 몇 개가 있는지를 출력해야 한다.
 중복되는 수는 자기 자신을 제외해야 하기 때문에, set을 통해 중복 제거를 수행했고,
 정렬된 상태라면 자기 자신의 인덱스가 자신보다 작은 수의 개수가 되므로,
@@ -26,9 +26,41 @@ join외의 방법도 하나 존재한다는 사실을 알게 되었는데, *(언
 """
 
 # sys.stdin = open("input.txt", "r")
+# data = sys.stdin.read().splitlines()
+# n = int(data[0])
+# number_list = list(map(int, data[1].split()))
+# number_set = sorted(set(number_list))
+# number_dict = {val: idx for idx, val in enumerate(number_set)}
+# print(' '.join(map(str, [number_dict[i] for i in number_list])))
+
+# 코드2.
+"""
+코드 2. 인덱스 정렬을 통한 구현
+인덱스 정렬이란, 자기 자신의 위치를 기억해줘야 되는 상태에서, 자신의 위치를 저장한 채로,
+특정 기준에 맞추어 정렬하는 알고리즘이다. 이에 따라 [값,인덱스]의 꼴을 띄게 된다.
+과정은 다음과 같다.
+1. 다차원 리스트로 값과 인덱스 정보를 담아두기
+2. 값 기준 정렬 사용
+3. 중복을 체크하여, 순위 부여
+이 과정을 수행하는데, 처음에는 별도의 answer_list를 만들지 않고,
+값이 들어가는 위치에 rank값으로 덮어씌었지만, 이렇게 되면, 해당 리스트롤 또 정렬해야하기 때문에,
+별도의 리스트를 초기에 크기를 주고 할당 후, 기존 인덱스순에 맞추어 rank값으로 채워 구현할 수 있었다.
+"""
+# sys.stdin = open("input.txt", "r")
 data = sys.stdin.read().splitlines()
 n = int(data[0])
 number_list = list(map(int, data[1].split()))
-number_set = sorted(set(number_list))
-number_dict = {val: idx for idx, val in enumerate(number_set)}
-print(' '.join(map(str, [number_dict[i] for i in number_list])))
+number_with_idx = [[val, idx] for idx, val in enumerate(number_list)]
+sorted_list = sorted(number_with_idx, key=lambda x: x[0])
+
+rank_num = 0
+answer_list = [0] * n
+for i in range(n - 1):
+    if sorted_list[i][0] != sorted_list[i + 1][0]:
+        answer_list[sorted_list[i][1]] = rank_num
+        rank_num += 1
+        continue
+    answer_list[sorted_list[i][1]] = rank_num
+answer_list[sorted_list[-1][1]] = rank_num
+
+print(' '.join(map(str, answer_list)))
